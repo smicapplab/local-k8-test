@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sveltekit-app-deployment
+  labels:
+    app: sveltekit-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sveltekit-app-deployment
+  template:
+    metadata:
+      labels:
+        app: sveltekit-app-deployment
+    spec:
+      containers:
+      - name: sveltekit-app-deployment
+        image: torrefranca/sveltekit-supabase:v1
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: apps/v1
+kind: Service
+metadata:
+  name: sveltekit-app-service
+spec:
+  selector:
+    name: sveltekit-app-deployment
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  template:
+    metadata:
+      labels:
+        name: sveltekit-app-deployment
+    spec:
+      containers:
+        - name: sveltekit-app-deployment
+          image: torrefranca/sveltekit-supabase:v1
+          ports:
+          - containerPort: 3000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
